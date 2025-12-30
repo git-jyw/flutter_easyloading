@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 nslog11
+// Copyright (c) 2020 nslogx
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -28,6 +28,9 @@ import 'package:flutter/scheduler.dart';
 import '../theme.dart';
 import '../easy_loading.dart';
 
+//https://docs.flutter.dev/development/tools/sdk/release-notes/release-notes-3.0.0
+T? _ambiguate<T>(T? value) => value;
+
 class EasyLoadingContainer extends StatefulWidget {
   final Widget? indicator;
   final String? status;
@@ -36,6 +39,7 @@ class EasyLoadingContainer extends StatefulWidget {
   final EasyLoadingMaskType? maskType;
   final Completer<void>? completer;
   final bool animation;
+  final bool isLoading;
 
   const EasyLoadingContainer({
     Key? key,
@@ -46,6 +50,7 @@ class EasyLoadingContainer extends StatefulWidget {
     this.maskType,
     this.completer,
     this.animation = true,
+    this.isLoading = false,
   }) : super(key: key);
 
   @override
@@ -60,8 +65,9 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
   late AlignmentGeometry _alignment;
   late bool _dismissOnTap, _ignoring;
 
+  //https://docs.flutter.dev/development/tools/sdk/release-notes/release-notes-3.0.0
   bool get isPersistentCallbacks =>
-      SchedulerBinding.instance?.schedulerPhase ==
+      _ambiguate(SchedulerBinding.instance)!.schedulerPhase ==
       SchedulerPhase.persistentCallbacks;
 
   @override
@@ -98,8 +104,9 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
   Future<void> show(bool animation) {
     if (isPersistentCallbacks) {
       Completer<void> completer = Completer<void>();
-      SchedulerBinding.instance?.addPostFrameCallback((_) => completer
-          .complete(_animationController.forward(from: animation ? 0 : 1)));
+      _ambiguate(SchedulerBinding.instance)!.addPostFrameCallback((_) =>
+          completer
+              .complete(_animationController.forward(from: animation ? 0 : 1)));
       return completer.future;
     } else {
       return _animationController.forward(from: animation ? 0 : 1);
@@ -109,8 +116,9 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
   Future<void> dismiss(bool animation) {
     if (isPersistentCallbacks) {
       Completer<void> completer = Completer<void>();
-      SchedulerBinding.instance?.addPostFrameCallback((_) => completer
-          .complete(_animationController.reverse(from: animation ? 1 : 0)));
+      _ambiguate(SchedulerBinding.instance)!.addPostFrameCallback((_) =>
+          completer
+              .complete(_animationController.reverse(from: animation ? 1 : 0)));
       return completer.future;
     } else {
       return _animationController.reverse(from: animation ? 1 : 0);
@@ -166,6 +174,7 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
               _Indicator(
                 status: _status,
                 indicator: widget.indicator,
+                isLoading: widget.isLoading,
               ),
               _animationController,
               _alignment,
@@ -180,10 +189,12 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
 class _Indicator extends StatelessWidget {
   final Widget? indicator;
   final String? status;
+  final bool isLoading;
 
   const _Indicator({
     required this.indicator,
     required this.status,
+    required this.isLoading,
   });
 
   @override
@@ -191,7 +202,8 @@ class _Indicator extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(50.0),
       decoration: BoxDecoration(
-        color: EasyLoadingTheme.backgroundColor,
+        color:
+            isLoading ? Colors.transparent : EasyLoadingTheme.backgroundColor,
         borderRadius: BorderRadius.circular(
           EasyLoadingTheme.radius,
         ),
