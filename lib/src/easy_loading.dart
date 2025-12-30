@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 nslog11
+// Copyright (c) 2020 nslogx
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -165,7 +165,7 @@ class EasyLoading {
 
   /// background color of loading, only used for [EasyLoadingStyle.custom].
   Color? backgroundColor;
-  
+
   /// boxShadow of loading, only used for [EasyLoadingStyle.custom].
   List<BoxShadow>? boxShadow;
 
@@ -254,11 +254,11 @@ class EasyLoading {
   }) {
     Widget w = indicator ?? (_instance.indicatorWidget ?? LoadingIndicator());
     return _instance._show(
-      status: status,
-      maskType: maskType,
-      dismissOnTap: dismissOnTap,
-      w: w,
-    );
+        status: status,
+        maskType: maskType,
+        dismissOnTap: dismissOnTap,
+        w: w,
+        isLoading: true);
   }
 
   /// show progress with [value] [status] [maskType], value should be 0.0 ~ 1.0.
@@ -413,14 +413,14 @@ class EasyLoading {
   }
 
   /// show [status] [duration] [toastPosition] [maskType]
-  Future<void> _show({
-    Widget? w,
-    String? status,
-    Duration? duration,
-    EasyLoadingMaskType? maskType,
-    bool? dismissOnTap,
-    EasyLoadingToastPosition? toastPosition,
-  }) async {
+  Future<void> _show(
+      {Widget? w,
+      String? status,
+      Duration? duration,
+      EasyLoadingMaskType? maskType,
+      bool? dismissOnTap,
+      EasyLoadingToastPosition? toastPosition,
+      bool isLoading = false}) async {
     assert(
       overlayEntry != null,
       'You should call EasyLoading.init() in your MaterialApp',
@@ -472,6 +472,7 @@ class EasyLoading {
       maskType: maskType,
       dismissOnTap: dismissOnTap,
       completer: completer,
+      isLoading: isLoading,
     );
     completer.future.whenComplete(() {
       _callback(EasyLoadingStatus.show);
