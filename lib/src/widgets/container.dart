@@ -39,6 +39,7 @@ class EasyLoadingContainer extends StatefulWidget {
   final EasyLoadingMaskType? maskType;
   final Completer<void>? completer;
   final bool animation;
+  final bool isLoading;
 
   const EasyLoadingContainer({
     Key? key,
@@ -49,6 +50,7 @@ class EasyLoadingContainer extends StatefulWidget {
     this.maskType,
     this.completer,
     this.animation = true,
+    this.isLoading = false,
   }) : super(key: key);
 
   @override
@@ -172,6 +174,7 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
               _Indicator(
                 status: _status,
                 indicator: widget.indicator,
+                isLoading: widget.isLoading,
               ),
               _animationController,
               _alignment,
@@ -186,10 +189,12 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
 class _Indicator extends StatelessWidget {
   final Widget? indicator;
   final String? status;
+  final bool isLoading;
 
   const _Indicator({
     required this.indicator,
     required this.status,
+    required this.isLoading,
   });
 
   @override
@@ -197,7 +202,8 @@ class _Indicator extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(50.0),
       decoration: BoxDecoration(
-        color: EasyLoadingTheme.backgroundColor,
+        color:
+            isLoading ? Colors.transparent : EasyLoadingTheme.backgroundColor,
         borderRadius: BorderRadius.circular(
           EasyLoadingTheme.radius,
         ),
