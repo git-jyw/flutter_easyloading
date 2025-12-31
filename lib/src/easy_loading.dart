@@ -254,7 +254,7 @@ class EasyLoading {
   }) {
     Widget w = indicator ?? (_instance.indicatorWidget ?? LoadingIndicator());
     return _instance._show(
-        status: status,
+        // status: status,
         maskType: maskType,
         dismissOnTap: dismissOnTap,
         w: w,
